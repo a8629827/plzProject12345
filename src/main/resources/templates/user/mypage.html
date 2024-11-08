@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+
+<div layout:fragment="content">
+  <div class="container">
+    <h3>My Page</h3>
+    <form action="/user/update" method="post">
+
+      <!-- 이름 수정 필드 -->
+      <div class="form-group mt-3">
+        <label for="name">이름:</label>
+        <input type="text" class="form-control" id="name" name="name" th:value="${user.name}" required>
+      </div>
+
+      <!-- 생년월일 수정 필드 -->
+      <div class="form-group mt-3">
+        <label for="birthDate">생년월일:</label>
+        <input type="text" class="form-control" id="birthDate" name="birthDate" th:value="${user.birthDate}" placeholder="날짜 선택" required>
+      </div>
+
+      <!-- 사용자명 수정 필드 -->
+      <div class="form-group mt-3">
+        <label for="username">아이디:</label>
+        <input type="text" class="form-control" id="username" name="username" th:value="${user.username}" required readonly>
+      </div>
+
+      <!-- 비밀번호 수정 필드 -->
+      <div class="form-group mt-3">
+        <label for="password">비밀번호:</label>
+        <input type="password" class="form-control" id="password" name="password" placeholder="새 비밀번호를 입력하세요">
+      </div>
+
+      <!-- 이메일 수정 필드 -->
+      <div class="form-group mt-3">
+        <label for="email">이메일:</label>
+        <input type="email" class="form-control" id="email" name="email" th:value="${user.email}" required>
+      </div>
+
+      <!-- 성별 수정 필드 -->
+      <div class="form-group mt-3">
+        <label for="gender">성별:</label>
+        <input type="text" class="form-control" id="gender" name="gender" th:value="${user.gender}" required>
+      </div>
+
+      <!-- 주소 시 선택 필드 -->
+      <div class="form-group mt-3">
+        <label for="city">시:</label>
+        <select class="form-control" id="city" name="city" required onchange="updateDistricts()" th:value="${user.city}">
+          <option value="">시를 선택하세요</option>
+          <option value="서울">서울</option>
+          <option value="부산">부산</option>
+          <option value="대구">대구</option>
+          <option value="인천">인천</option>
+          <!-- 추가 시 옵션들 -->
+        </select>
+      </div>
+
+      <!-- 주소 구 선택 필드 -->
+      <div class="form-group mt-3">
+        <label for="state">구:</label>
+        <select class="form-control" id="state" name="state" required th:value="${user.state}">
+          <option value="">구를 선택하세요</option>
+          <!-- 구 옵션들은 JavaScript로 동적으로 추가됩니다 -->
+        </select>
+      </div>
+
+      <script>
+        // 시에 따른 구 목록
+        const districts = {
+          서울: ["강남구", "강동구", "강북구", "강서구", "관악구"],
+          부산: ["해운대구", "부산진구", "동래구", "남구"],
+          대구: ["수성구", "달서구", "중구"],
+          인천: ["미추홀구", "연수구", "남동구"]
+          // 추가 구 목록
+        };
+
+        // 선택한 시에 따라 구 목록 업데이트
+        function updateDistricts() {
+          const citySelect = document.getElementById("city");
+          const stateSelect = document.getElementById("state");
+          const selectedCity = citySelect.value;
+
+          // 구 옵션 초기화
+          stateSelect.innerHTML = '<option value="">구를 선택하세요</option>';
+
+          // 선택된 시에 맞는 구 옵션 추가
+          if (selectedCity && districts[selectedCity]) {
+            districts[selectedCity].forEach(district => {
+              const option = document.createElement("option");
+              option.value = district;
+              option.textContent = district;
+              stateSelect.appendChild(option);
+            });
+          }
+        }
+      </script>
+      <!-- 저장 및 취소 버튼 -->
+      <div class="form-group mt-3">
+        <button type="submit" class="btn btn-primary">저장</button>
+        <button type="reset" class="btn btn-secondary">취소</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+</script>
+
+</html>

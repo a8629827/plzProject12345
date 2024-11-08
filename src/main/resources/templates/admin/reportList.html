@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>신고 목록</title>
+</head>
+<body>
+<div class="container">
+    <h2>신고된 게시글 목록</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>게시글 제목</th>
+            <th>신고자</th>
+            <th>신고 날짜</th>
+        </tr>
+        </thead>
+        <tbody th:each="report : ${reports}">
+        <tr>
+            <td th:text="${report.post.title}"></td>
+            <td th:text="${report.user.username}"></td>
+            <td th:text="${#dates.format(report.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+
+<div layout:fragment="content">
+  <div class="container">
+    <h3>JOIN</h3>
+    <form action="/user/register" method="post">
+
+      <!-- 이름 입력 필드 -->
+      <div class="form-group mt-3">
+        <label for="name">이름:</label>
+        <input type="text" class="form-control" id="name" placeholder="Enter name" name="name" required>
+      </div>
+
+      <!-- 생년월일 입력 필드 -->
+      <div class="form-group mt-3">
+        <label for="birthDate">생년월일:</label>
+        <input type="date" class="form-control" id="birthDate" name="birthDate" required>
+      </div>
+
+      <!-- 사용자명 입력 필드 -->
+      <div class="form-group mt-3">
+        <label for="username">아이디:</label>
+        <input type="text" class="form-control" id="username" placeholder="Enter username" name="username" required>
+      </div>
+
+      <!-- 비밀번호 입력 필드 -->
+      <div class="form-group mt-3">
+        <label for="password">비밀번호:</label>
+        <input type="password" class="form-control" id="password" placeholder="Enter password" name="password" required>
+      </div>
+
+      <!-- 이메일 입력 필드 -->
+      <div class="form-group mt-3">
+        <label for="email">이메일:</label>
+        <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" required>
+      </div>
+
+      <!-- 성별 입력 필드 -->
+      <div class="form-group mt-3">
+        <label for="gender">성별:</label>
+        <input type="text" class="form-control" id="gender" placeholder="Enter gender" name="gender" required>
+      </div>
+
+      <!-- 주소 시 선택 필드 -->
+      <div class="form-group mt-3">
+        <label for="city">시:</label>
+        <select class="form-control" id="city" name="city" required onchange="updateDistricts()">
+          <option value="">시를 선택하세요</option>
+          <option value="서울">서울</option>
+          <option value="부산">부산</option>
+          <option value="대구">대구</option>
+          <option value="인천">인천</option>
+          <!-- 추가 시 옵션들 -->
+        </select>
+      </div>
+
+      <!-- 주소 구 선택 필드 -->
+      <div class="form-group mt-3">
+        <label for="state">구:</label>
+        <select class="form-control" id="state" name="state" required>
+          <option value="">구를 선택하세요</option>
+          <!-- 구 옵션들은 JavaScript로 동적으로 추가됩니다 -->
+        </select>
+      </div>
+
+      <script>
+        // 시에 따른 구 목록
+        const districts = {
+          서울: ["강남구", "강동구", "강북구", "강서구", "관악구"],
+          부산: ["해운대구", "부산진구", "동래구", "남구"],
+          대구: ["수성구", "달서구", "중구"],
+          인천: ["미추홀구", "연수구", "남동구"]
+          // 추가 구 목록
+        };
+
+        // 선택한 시에 따라 구 목록 업데이트
+        function updateDistricts() {
+          const citySelect = document.getElementById("city");
+          const stateSelect = document.getElementById("state");
+          const selectedCity = citySelect.value;
+
+          // 구 옵션 초기화
+          stateSelect.innerHTML = '<option value="">구를 선택하세요</option>';
+
+          // 선택된 시에 맞는 구 옵션 추가
+          if (selectedCity && districts[selectedCity]) {
+            districts[selectedCity].forEach(district => {
+              const option = document.createElement("option");
+              option.value = district;
+              option.textContent = district;
+              stateSelect.appendChild(option);
+            });
+          }
+        }
+      </script>
+
+      <!-- 폼 제출 및 초기화 버튼 -->
+      <div class="form-group mt-3">
+        <button type="submit" class="btn btn-primary">Register</button>
+        <button type="reset" class="btn btn-secondary">Reset</button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+</script>
