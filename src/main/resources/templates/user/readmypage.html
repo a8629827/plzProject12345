@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+
+<div layout:fragment="content">
+  <div class="container">
+    <h3>My Page</h3>
+
+    <!-- Section for My Posts -->
+    <div class="my-posts mt-4">
+      <h5>내가 쓴 글</h5>
+      <ul class="list-group">
+        <!-- Loop through user posts and display -->
+        <li class="list-group-item" th:each="post : ${user.posts}">
+          <span th:text="${post.title}">Post Title</span>
+          <span class="text-muted float-right" th:text="${post.date}">Date</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Section for My Applied Posts -->
+    <div class="applied-posts mt-4">
+      <h5>내가 신청한 글</h5>
+      <ul class="list-group">
+        <!-- Loop through applied posts and display -->
+        <li class="list-group-item" th:each="appliedPost : ${user.appliedPosts}">
+          <span th:text="${appliedPost.title}">Applied Post Title</span>
+          <span class="text-muted float-right" th:text="${appliedPost.date}">Date</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Personal Information Edit Button -->
+    <div class="form-group mt-4">
+      <button onclick="location.href='/user/edit'" class="btn btn-primary">개인정보 수정</button>
+    </div>
+  </div>
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+</script>
+
+</html>

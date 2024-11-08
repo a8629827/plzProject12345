@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.security.Principal;
-
 @Log4j2
 @Controller
 @RequestMapping("/user")
@@ -61,8 +59,10 @@ public class UserController {
     // 사용자 정보 수정 처리 (POST 요청)
     @PostMapping("/update")
     public String updateUser(@ModelAttribute User user) {
+        User existingUser = userRepository.findById(user.getId()).orElseThrow();
+        user.setRole(existingUser.getRole());  // 기존 역할 유지
         // 사용자가 수정한 정보로 사용자 업데이트
-        userService.updateUser(user);
+        userService.save(user);
 
         // 업데이트 후 마이페이지로 리다이렉트
         return "redirect:/user/mypage";
