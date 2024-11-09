@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+<head>
+  <meta charset="UTF-8">
+  <title>Read My Page</title>
+  <style>
+    /* 컨테이너 스타일 */
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    /* 제목 스타일 */
+    h3 {
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    /* 버튼 그룹 스타일 */
+    .btn-group {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    /* 버튼 스타일 */
+    .btn {
+      width: 30%;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: 500;
+      border-radius: 6px;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    /* 버튼 호버 효과 */
+    .btn-primary:hover {
+      background-color: #0056b3;
+      transform: scale(1.05);
+    }
+
+    .btn-secondary:hover {
+      background-color: #6c757d;
+      transform: scale(1.05);
+    }
+
+    .btn-info:hover {
+      background-color: #117a8b;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+
+<div layout:fragment="content">
+  <div class="container">
+    <h3>My Page</h3>
+    <div class="btn-group mt-4" role="group" aria-label="My Page Buttons">
+      <!-- 작성한 글 버튼 -->
+      <button type="button" class="btn btn-primary"
+              onclick="location.href='/user/myPosts'">나의 작성글</button>
+
+      <!-- 신청한 글 버튼 -->
+      <button type="button" class="btn btn-secondary"
+              onclick="location.href='/user/appliedPosts'">나의 신청목록</button>
+
+      <!-- mypage로 이동하는 버튼 -->
+      <button type="button" class="btn btn-info"
+              onclick="location.href='/user/mypage'">내정보수정</button>
+    </div>
+  </div>
+</div>
+
+</html>

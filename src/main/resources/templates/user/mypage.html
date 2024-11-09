@@ -7,7 +7,7 @@
   <div class="container">
     <h3>My Page</h3>
     <form action="/user/update" method="post">
-
+      <input type="hidden" name="id" th:value="${user.id}">
       <!-- 이름 수정 필드 -->
       <div class="form-group mt-3">
         <label for="name">이름:</label>

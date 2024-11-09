@@ -61,10 +61,27 @@ public class UserController {
     // 사용자 정보 수정 처리 (POST 요청)
     @PostMapping("/update")
     public String updateUser(@ModelAttribute User user) {
+        User existingUser = userRepository.findById(user.getId()).orElseThrow();
+        // 비밀번호가 입력되지 않았다면 기존 비밀번호 유지
+        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            user.setPassword(existingUser.getPassword());
+        } else {
+            // 비밀번호가 입력되었다면 새 비밀번호로 설정 (암호화)
+            String encPassword = bCryptPasswordEncoder.encode(user.getPassword());
+            user.setPassword(encPassword);
+        }
+        user.setRole(existingUser.getRole());  // 기존 역할 유지
+
         // 사용자가 수정한 정보로 사용자 업데이트
-        userService.updateUser(user);
+        userService.save(user);
 
         // 업데이트 후 마이페이지로 리다이렉트
         return "redirect:/user/mypage";
+    }
+
+    @GetMapping("/readmypage")
+    public String readMyPage(Model model, @AuthenticationPrincipal PrincipalDetails principal) {
+        // 필요한 데이터가 있다면 모델에 추가
+        return "user/readmypage"; // readmypage.html 뷰로 이동
     }
 }
