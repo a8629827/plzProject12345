@@ -16,6 +16,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
     private Long id;
 
     @Column(nullable = false, length = 50)
@@ -36,7 +37,7 @@ public class User {
     @Column(nullable = false, length = 10)
     private String gender;
 
-    @Column(nullable = false, length = 10)
+    @Column(length = 10)
     private String role;
 
     @Column(nullable = false, length = 50)
