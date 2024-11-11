@@ -17,6 +17,7 @@ import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long>, PostSearch {
 
+    List<Post> findByUserId(Long userId);
 
     @Query("SELECT p FROM Post p WHERE " //동적쿼리
             + "(:keyword IS NULL OR p.title LIKE %:keyword% OR p.contentText LIKE %:keyword%) "

@@ -30,7 +30,6 @@ public class Post extends BaseEntity {
     // 모집 인원 필드
     private Integer requiredParticipants; // 모집 인원
 
-
     // 모집 상태 필드
     @Enumerated(EnumType.STRING)
     private Status status; // 모집 상태 (모집중 또는 모집완료)
@@ -38,7 +37,12 @@ public class Post extends BaseEntity {
     public enum Status {
         모집중, 모집완료
     }
+    private double lat;//위도
+    private double lng;//경도
 
+    @Builder.Default
+    // 비공개 처리 상태 (기본값: true)
+    private boolean isVisible = true; // 기본값은 true (게시글이 공개 상태로 설정)
 
 
     // 게시글 제목과 내용을 변경하는 메서드
@@ -91,4 +95,23 @@ public class Post extends BaseEntity {
         imageSet.forEach(pPhoto -> pPhoto.changePost(null));
         this.imageSet.clear();
     }
+
+    // 비공개 처리 메서드
+    //글을 비공개로 설정하고 싶을 때 사용
+    public void setInvisible() {
+        this.isVisible = false;
+    }
+
+
+    //공개/비공개 상태를 설정하고 싶을 때 사용.
+    public void setIsVisible(boolean isVisible) {
+        this.isVisible = isVisible;
+    }
+
+    //현재 공개 상태를 확인할 때 사용.
+    public boolean isVisible() {
+        return isVisible;
+    }
+
+
 }

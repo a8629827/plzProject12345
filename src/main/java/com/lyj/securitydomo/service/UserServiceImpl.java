@@ -22,13 +22,13 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PostRepository postRepository;
 
-    public void applyToPost(Long userId, Long postId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
-
-        user.getAppliedPosts().add(post); // 신청 게시글 추가
-        userRepository.save(user);
-    }
+//    public void applyToPost(Long userId, Long postId) {
+//        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+//        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
+//
+//        user.getAppliedPosts().add(post); // 신청 게시글 추가
+//        userRepository.save(user);
+//    }
 
     private final ModelMapper modelMapper;
 
