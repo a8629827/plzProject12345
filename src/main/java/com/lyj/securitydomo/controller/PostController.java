@@ -41,6 +41,7 @@ public class PostController {
 
     private final PostService postService;
 
+
     /**
      * 게시글 목록을 조회하고 모델에 전달하는 메서드
      *

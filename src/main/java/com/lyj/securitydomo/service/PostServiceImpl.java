@@ -1,6 +1,7 @@
 package com.lyj.securitydomo.service;
 
 import com.lyj.securitydomo.domain.Post;
+import com.lyj.securitydomo.domain.User;
 import com.lyj.securitydomo.dto.PageRequestDTO;
 import com.lyj.securitydomo.dto.PageResponseDTO;
 import com.lyj.securitydomo.dto.PostDTO;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
+
     @Override
     public Long register(PostDTO postDTO) {
         // 1. Post 엔티티 생성
@@ -44,7 +46,6 @@ public class PostServiceImpl implements PostService {
         return postRepository.save(post).getPostId();
     }
     private final PostRepository postRepository;
-
 
     @Override
     public PostDTO readOne(Long postId) {
@@ -119,4 +120,5 @@ public class PostServiceImpl implements PostService {
                 .total((int) result.getTotalElements())
                 .build();
     }
+
 }

@@ -1,8 +1,11 @@
 package com.lyj.securitydomo.controller;
 
 import com.lyj.securitydomo.config.auth.PrincipalDetails;
+import com.lyj.securitydomo.domain.Post;
 import com.lyj.securitydomo.domain.User;
 import com.lyj.securitydomo.repository.UserRepository;
+import com.lyj.securitydomo.service.PostService;
+import com.lyj.securitydomo.service.PostServiceImpl;
 import com.lyj.securitydomo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
+import java.util.List;
 
 @Log4j2
 @Controller
@@ -25,6 +29,7 @@ public class UserController {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final UserService userService;
+    private final PostService postService;
 
     @GetMapping("/join")
     public void join(){
@@ -84,4 +89,5 @@ public class UserController {
         // 필요한 데이터가 있다면 모델에 추가
         return "user/readmypage"; // readmypage.html 뷰로 이동
     }
+
 }

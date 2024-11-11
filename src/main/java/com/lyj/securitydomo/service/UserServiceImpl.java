@@ -1,7 +1,9 @@
 package com.lyj.securitydomo.service;
 
+import com.lyj.securitydomo.domain.Post;
 import com.lyj.securitydomo.domain.User;
 import com.lyj.securitydomo.dto.UserDTO;
+import com.lyj.securitydomo.repository.PostRepository;
 import com.lyj.securitydomo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -14,7 +16,20 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+    @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PostRepository postRepository;
+
+    public void applyToPost(Long userId, Long postId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
+
+        user.getAppliedPosts().add(post); // 신청 게시글 추가
+        userRepository.save(user);
+    }
+
     private final ModelMapper modelMapper;
 
     @Override

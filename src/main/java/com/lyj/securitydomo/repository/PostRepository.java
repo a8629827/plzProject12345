@@ -3,6 +3,7 @@ package com.lyj.securitydomo.repository;
 
 
 import com.lyj.securitydomo.domain.Post;
+import com.lyj.securitydomo.domain.User;
 import com.lyj.securitydomo.repository.search.PostSearch;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,4 +31,5 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostSearch {
     @EntityGraph(attributePaths = {"imageSet"})
     @Query("select p from Post p where p.postId=:postId")
     Optional<Post> findByIdWithImages(Long postId);
+
 }

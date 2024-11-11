@@ -30,6 +30,7 @@ public class Post extends BaseEntity {
     // 모집 인원 필드
     private Integer requiredParticipants; // 모집 인원
 
+
     // 모집 상태 필드
     @Enumerated(EnumType.STRING)
     private Status status; // 모집 상태 (모집중 또는 모집완료)
@@ -37,6 +38,8 @@ public class Post extends BaseEntity {
     public enum Status {
         모집중, 모집완료
     }
+
+
 
     // 게시글 제목과 내용을 변경하는 메서드
     public void change(String title, String contentText) {
