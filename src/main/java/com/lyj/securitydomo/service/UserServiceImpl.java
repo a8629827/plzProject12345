@@ -6,6 +6,7 @@ import com.lyj.securitydomo.dto.UserDTO;
 import com.lyj.securitydomo.repository.PostRepository;
 import com.lyj.securitydomo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -70,5 +72,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUser(User user) {
 
+    }
+
+    @Override
+    public void deleteUserById(Long userId) {
+        log.info("사용자 삭제 요청 처리 중, 사용자 ID: " + userId);
+        userRepository.deleteById(userId); // 사용자 삭제
     }
 }

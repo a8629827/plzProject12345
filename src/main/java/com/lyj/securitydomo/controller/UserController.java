@@ -32,6 +32,15 @@ public class UserController {
     private final UserService userService;
     private final PostService postService;
 
+
+
+    @GetMapping("/delete")
+    public String deleteUser(@AuthenticationPrincipal PrincipalDetails principal) {
+        Long userId = principal.getUser().getId();
+        userService.deleteUserById(userId);
+        return "redirect:/logout"; // 탈퇴 후 로그아웃 처리
+    }
+
     @GetMapping("/join")
     public void join(){
     }

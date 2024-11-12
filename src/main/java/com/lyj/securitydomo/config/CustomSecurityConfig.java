@@ -39,7 +39,7 @@ public class CustomSecurityConfig {
                         .defaultSuccessUrl("/posting/list"))
                 .logout(logoutConfigurer -> logoutConfigurer
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/")
+                        .logoutSuccessUrl("/user/login")
                         .invalidateHttpSession(true)
                         .clearAuthentication(true))
                 .build();

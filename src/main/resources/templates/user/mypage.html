@@ -2,7 +2,21 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/basic.html}">
+<head>
+  <!--<script layout:fragment="script" th:inline="javascript">-->
+<!--  <script>-->
+<!--    function confirmDeletion() {-->
+<!--      // console.log("12344");-->
+<!--      if (confirm("정말로 탈퇴하시겠습니까?")) {-->
+<!--        // 탈퇴 요청을 서버로 전송하거나, 특정 URL로 이동-->
+<!--        location.href = "/user/delete";-->
+<!--      }-->
+<!--    }-->
+<!--  </script>-->
 
+</head>
+
+<body>
 <div layout:fragment="content">
   <div class="container">
     <h3>My Page</h3>
@@ -100,12 +114,21 @@
       <div class="form-group mt-3">
         <button type="submit" class="btn btn-primary">저장</button>
         <button type="button" class="btn btn-secondary" onclick="location.href='/user/readmypage'">취소</button>
+        <!-- 탈퇴하기 버튼 -->
+        <button type="button" class="btn btn-danger" onclick="confirmDeletion()">탈퇴하기</button>
       </div>
     </form>
   </div>
 </div>
 
 <script layout:fragment="script" th:inline="javascript">
+  function confirmDeletion() {
+    // console.log("12344");
+    if (confirm("정말로 탈퇴하시겠습니까?")) {
+    // 탈퇴 요청을 서버로 전송하거나, 특정 URL로 이동
+    location.href = "/user/delete";
+  }
+    }
 </script>
-
+</body>
 </html>
