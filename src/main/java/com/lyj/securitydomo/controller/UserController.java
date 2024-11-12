@@ -3,6 +3,7 @@ package com.lyj.securitydomo.controller;
 import com.lyj.securitydomo.config.auth.PrincipalDetails;
 import com.lyj.securitydomo.domain.Post;
 import com.lyj.securitydomo.domain.User;
+import com.lyj.securitydomo.dto.PostDTO;
 import com.lyj.securitydomo.repository.UserRepository;
 import com.lyj.securitydomo.service.PostService;
 import com.lyj.securitydomo.service.PostServiceImpl;
@@ -90,4 +91,15 @@ public class UserController {
         return "user/readmypage"; // readmypage.html 뷰로 이동
     }
 
+    @GetMapping("/info")
+    public String getUserInfo(@AuthenticationPrincipal PrincipalDetails principal, Model model) {
+        // 로그인한 사용자 정보 가져오기
+        User user = principal.getUser();
+
+        // 모델에 사용자 정보 추가
+        model.addAttribute("user", user);
+
+        // 사용자 정보 페이지로 이동
+        return "user/info";
+    }
 }

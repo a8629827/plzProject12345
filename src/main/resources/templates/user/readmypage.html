@@ -63,17 +63,13 @@
   <div class="container">
     <h3>My Page</h3>
     <div class="btn-group mt-4" role="group" aria-label="My Page Buttons">
-      <!-- 작성한 글 버튼 -->
-      <button type="button" class="btn btn-primary"
-              onclick="location.href='/user/myPosts'">나의 작성글</button>
+      <!-- 기존 버튼 -->
+      <button type="button" class="btn btn-primary" onclick="location.href='/user/mywriting'">나의 작성글</button>
+      <button type="button" class="btn btn-secondary" onclick="location.href='/user/myapp'">나의 신청목록</button>
+      <button type="button" class="btn btn-info" onclick="location.href='/user/mypage'">내정보수정</button>
 
-      <!-- 신청한 글 버튼 -->
-      <button type="button" class="btn btn-secondary"
-              onclick="location.href='/user/appliedPosts'">나의 신청목록</button>
-
-      <!-- mypage로 이동하는 버튼 -->
-      <button type="button" class="btn btn-info"
-              onclick="location.href='/user/mypage'">내정보수정</button>
+      <!-- 내 정보 보기 버튼 -->
+      <button type="button" class="btn btn-success" onclick="location.href='/user/info'">내 정보 보기</button>
     </div>
   </div>
 </div>

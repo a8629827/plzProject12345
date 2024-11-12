@@ -55,6 +55,15 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @ManyToMany
+    @JoinTable(
+            name = "post_applicants",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    @Builder.Default
+    private Set<User> applicants = new HashSet<>(); //신청자 정보를 담는 필드
+
     @OneToMany(mappedBy = "post",
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,

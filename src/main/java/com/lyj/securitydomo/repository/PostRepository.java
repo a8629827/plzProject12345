@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,4 +34,8 @@ public interface PostRepository extends JpaRepository<Post, Long>, PostSearch {
     @Query("select p from Post p where p.postId=:postId")
     Optional<Post> findByIdWithImages(Long postId);
 
+    @Query("SELECT p FROM Post p JOIN p.applicants u WHERE u.id = :userId")
+    List<Post> findAllByApplicantUserId(@Param("userId") Long userId); //내가 신청한 글 조회
+
+    Collection<Object> findByUser_Id(Long userId);
 }

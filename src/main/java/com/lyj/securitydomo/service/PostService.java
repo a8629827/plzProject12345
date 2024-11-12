@@ -25,5 +25,4 @@ public interface PostService {
     // 게시글 목록 조회 메서드
     PageResponseDTO<PostDTO> list(PageRequestDTO pageRequestDTO);
 
-
 }
