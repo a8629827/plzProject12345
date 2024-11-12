@@ -79,4 +79,9 @@ public class UserServiceImpl implements UserService {
         log.info("사용자 삭제 요청 처리 중, 사용자 ID: " + userId);
         userRepository.deleteById(userId); // 사용자 삭제
     }
+
+    @Override
+    public User findByUsername(String username) {
+        return null;
+    }
 }

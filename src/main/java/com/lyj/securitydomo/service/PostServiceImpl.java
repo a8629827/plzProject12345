@@ -121,5 +121,20 @@ public class PostServiceImpl implements PostService {
                 .build();
     }
 
+    @Override
+    public List<Post> findPostsByUser(User user) {
+        return List.of();
+    }
+
+    @Override
+    public Post findById(Long postId) {
+        return null;
+    }
+
+    @Override
+    public void deletePost(Long postId) {
+
+    }
+
 
 }

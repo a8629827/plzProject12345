@@ -25,4 +25,9 @@ public interface PostService {
     // 게시글 목록 조회 메서드
     PageResponseDTO<PostDTO> list(PageRequestDTO pageRequestDTO);
 
+    List<Post> findPostsByUser(User user);
+
+    Post findById(Long postId);
+
+    void deletePost(Long postId);
 }

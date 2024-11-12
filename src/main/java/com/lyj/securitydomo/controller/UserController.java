@@ -11,13 +11,11 @@ import com.lyj.securitydomo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -110,5 +108,30 @@ public class UserController {
 
         // 사용자 정보 페이지로 이동
         return "user/info";
+    }
+    // 사용자가 작성한 게시글 목록 페이지
+    @GetMapping("/mywriting")
+    public String getMyPosts(@AuthenticationPrincipal UserDetails userDetails, Model model) {
+        String username = userDetails.getUsername();
+        User user = userService.findByUsername(username);
+        List<Post> myPosts = postService.findPostsByUser(user);
+        model.addAttribute("myPosts", myPosts);
+        return "user/mywriting";
+    }
+
+    // 게시글 삭제 요청 처리
+    @DeleteMapping("/posting/delete/{postId}")
+    @ResponseBody
+    public String deletePost(@PathVariable Long postId, @AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
+        User user = userService.findByUsername(username);
+        Post post = postService.findById(postId);
+
+        if (post != null && post.getUser().equals(user)) {
+            postService.deletePost(postId);
+            return "success";
+        } else {
+            return "fail";
+        }
     }
 }
