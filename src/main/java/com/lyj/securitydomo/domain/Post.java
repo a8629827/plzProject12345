@@ -37,13 +37,12 @@ public class Post extends BaseEntity {
     public enum Status {
         모집중, 모집완료
     }
-    private double lat;//위도
-    private double lng;//경도
+
+    private double lat; // 위도
+    private double lng; // 경도
 
     @Builder.Default
-    // 비공개 처리 상태 (기본값: true)
     private boolean isVisible = true; // 기본값은 true (게시글이 공개 상태로 설정)
-
 
     // 게시글 제목과 내용을 변경하는 메서드
     public void change(String title, String contentText) {
@@ -55,15 +54,6 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToMany
-    @JoinTable(
-            name = "post_applicants",
-            joinColumns = @JoinColumn(name = "post_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    @Builder.Default
-    private Set<User> applicants = new HashSet<>(); //신청자 정보를 담는 필드
-
     @OneToMany(mappedBy = "post",
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
@@ -72,19 +62,18 @@ public class Post extends BaseEntity {
     @BatchSize(size = 20)
     private Set<pPhoto> imageSet = Collections.synchronizedSet(new HashSet<>());
 
+    // 썸네일 이미지 링크를 가져오는 메서드
     public String getThumbnail() {
-        String thumbnailLink = (imageSet != null && !imageSet.isEmpty())
-                ? imageSet.iterator().next().getThumbnailLink() // 썸네일 링크를 가져옴
+        return (imageSet != null && !imageSet.isEmpty())
+                ? imageSet.iterator().next().getThumbnailLink()
                 : pPhoto.getRandomImage();
-        return thumbnailLink;
-
-
     }
 
+    // 원본 이미지 링크 목록을 가져오는 메서드
     public List<String> getOriginalImageLinks() {
         return imageSet.stream()
                 .sorted()
-                .map(pPhoto::getOriginalLink) // 각 pPhoto의 원본 링크를 가져옴
+                .map(pPhoto::getOriginalLink)
                 .collect(Collectors.toList());
     }
 
@@ -105,22 +94,28 @@ public class Post extends BaseEntity {
         this.imageSet.clear();
     }
 
-    // 비공개 처리 메서드
-    //글을 비공개로 설정하고 싶을 때 사용
+    // 게시글을 비공개로 설정하는 메서드
     public void setInvisible() {
         this.isVisible = false;
     }
 
-
-    //공개/비공개 상태를 설정하고 싶을 때 사용.
+    // 게시글의 공개 상태를 설정하는 메서드
     public void setIsVisible(boolean isVisible) {
         this.isVisible = isVisible;
     }
 
-    //현재 공개 상태를 확인할 때 사용.
+    // 게시글이 현재 공개 상태인지 확인하는 메서드
     public boolean isVisible() {
         return isVisible;
     }
 
+    // 게시글을 공개 상태로 전환하는 편의 메서드
+    public void makeVisible() {
+        this.isVisible = true;
+    }
 
+    // 게시글을 비공개 상태로 전환하는 편의 메서드
+    public void makeInvisible() {
+        this.isVisible = false;
+    }
 }

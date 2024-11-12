@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6"
@@ -21,7 +23,7 @@
                         <a class="nav-link" href="/">Home</a>
                     </li>
                     <li sec:authorize="isAuthenticated()" class="nav-item">
-                        <a class="nav-link" href="/post/view">Board List</a>
+                        <a class="nav-link" href="/posting/view">Board List</a>
                     </li>
                     <li sec:authorize="hasAnyAuthority('USER')" class="nav-item">
                         <a class="nav-link" href="/User">User</a>
@@ -53,9 +55,5 @@
 <div layout:fragment="content">
     <!-- 각 페이지의 내용이 여기에 들어갑니다 -->
 </div>
-<th:block layout:fragment="script">
-
-</th:block>
 </body>
-
 </html>

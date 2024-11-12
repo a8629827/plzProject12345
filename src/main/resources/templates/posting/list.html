@@ -41,7 +41,7 @@
           <div class="card h-100">
             <!-- 썸네일 이미지와 상세 페이지 링크 -->
             <a th:href="@{/posting/read/{postId}(postId=${post.postId})}" class="text-decoration-none">
-              <img class="card-img-top img-thumbnail" th:src="${post.getThumbnail()}" alt="이미지"/>
+              <img class="card-img-top img-thumbnail" th:src="@{${post.getThumbnail()}}" alt="이미지"/>
             </a>
             <div class="card-body p-4">
               <div class="text-center">
@@ -69,6 +69,22 @@
       </div>
     </div>
   </section>
+      <!-- 페이지네이션 -->
+      <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+<!--          <li class="page-item" th:class="${currentPage == 1} ? 'disabled'">-->
+<!--            <a th:href="@{/posting/list(page=${currentPage - 1}, size=10, type=${type}, keyword=${keyword})}" class="page-link">이전</a>-->
+<!--          </li>-->
+
+          <li class="page-item" th:each="i : ${#numbers.sequence(1, totalPages)}" th:class="${currentPage == i} ? 'active'">
+            <a th:href="@{/posting/list(page=${i}, size=8, type=${type}, keyword=${keyword})}" class="page-link" th:text="${i}"></a>
+          </li>
+
+<!--          <li class="page-item" th:class="${currentPage == totalPages} ? 'disabled'">-->
+<!--            <a th:href="@{/posting/list(page=${currentPage + 1}, size=${size}, type=${type}, keyword=${keyword})}" class="page-link">다음</a>-->
+<!--          </li>-->
+        </ul>
+      </nav>
 
   <!-- 신고하기 모달 -->
   <div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true" data-bs-backdrop="static">

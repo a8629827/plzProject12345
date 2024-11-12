@@ -1,3 +1,4 @@
+
 package com.lyj.securitydomo.service;
 
 import com.lyj.securitydomo.domain.Post;
@@ -11,7 +12,7 @@ import java.util.List;
 public interface PostService {
 
     // 게시글 등록 메서드
-    Long register(PostDTO postDTO);
+    Long register(PostDTO postDTO, User user);
 
     // 게시글 조회 메서드
     PostDTO readOne(Long postId);
@@ -25,9 +26,8 @@ public interface PostService {
     // 게시글 목록 조회 메서드
     PageResponseDTO<PostDTO> list(PageRequestDTO pageRequestDTO);
 
-    List<Post> findPostsByUser(User user);
+    // 게시글 비공개 처리 메서드
+    void markPostAsInvisible(Long postId);  // 비공개 처리 메서드
 
-    Post findById(Long postId);
-
-    void deletePost(Long postId);
+    public PageResponseDTO<PostDTO> writinglist(PageRequestDTO pageRequestDTO, User user);
 }

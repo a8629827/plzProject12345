@@ -1,28 +1,118 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout/basic.html}">
 <head>
     <meta charset="UTF-8">
-    <title>신고 목록</title>
+    <title>신고 글 관리</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-<div class="container">
-    <h2>신고된 게시글 목록</h2>
-    <table>
-        <thead>
-        <tr>
-            <th>게시글 제목</th>
-            <th>신고자</th>
-            <th>신고 날짜</th>
-        </tr>
-        </thead>
-        <tbody th:each="report : ${reports}">
-        <tr>
-            <td th:text="${report.post.title}"></td>
-            <td th:text="${report.user.username}"></td>
-            <td th:text="${#dates.format(report.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
-        </tr>
-        </tbody>
-    </table>
+<div layout:fragment="content">
+    <header class="bg-dark py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="text-center text-white">
+                <h1 class="display-4 fw-bolder">신고 글 관리</h1>
+                <p class="lead fw-normal text-white-50 mb-0">관리자는 신고된 글을 처리합니다.</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mt-4">
+        <!-- 필터 토글 -->
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="reportToggleSwitch" th:checked="${filter == 'in-progress'}">
+            <label class="form-check-label" for="reportToggleSwitch" id="reportToggleLabel">
+                <span th:text="${filter == 'in-progress' ? '전체 목록 보기' : '처리중인 글만 보기'}"></span>
+            </label>
+        </div>
+
+        <!-- 신고 글 목록 테이블 -->
+        <div class="row mt-3">
+            <div class="col-12">
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>글 제목</th>
+                        <th>신고 횟수</th>
+                        <th>상세보기</th>
+                        <th>상태</th> <!-- 처리 상태 표시 -->
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="report : ${reportList}">
+                        <td th:text="${report.postTitle}"></td> <!-- post의 title을 의미,글 제목 -->
+                        <td th:text="${report.reportCount}"></td> <!-- 신고 횟수 -->
+                        <td>
+                            <a th:href="@{/posting/read/{postId}(postId=${report.postId})}" class="btn btn-info">상세보기</a>
+                        </td>
+                        <td>
+                            <!-- 공개/비공개 처리 버튼 -->
+                            <button class="btn"
+                                    th:classappend="${report.status == 'HIDDEN' ? 'btn-warning' : 'btn-success'}"
+                                    th:text="${report.status == 'HIDDEN' ? '공개 처리' : '비공개 처리'}"
+                                    th:data-status="${report.status}"
+                                    th:data-reportId="${report.reportId}"
+                                    th:onclick="|confirmToggleVisibility(this)|">
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- JavaScript -->
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const toggleSwitch = document.getElementById("reportToggleSwitch");
+
+                // 필터 토글
+                if (toggleSwitch) {
+                    toggleSwitch.addEventListener("change", function() {
+                        let newUrl = "/admin/reports";
+                        newUrl += toggleSwitch.checked ? "?filter=in-progress" : "?filter=all";
+                        window.location.href = newUrl;
+                    });
+                }
+            });
+
+            // 공개/비공개 처리 이벤트
+            function confirmToggleVisibility(buttonElement) {
+                const currentStatus = buttonElement.getAttribute('data-status');
+                const reportId = buttonElement.getAttribute('data-reportId');
+
+                // 상태에 따라 경고문구 설정
+                const action = currentStatus === 'VISIBLE' ? '비공개 처리' : '공개 처리';
+                const confirmation = confirm(`${action}하시겠습니까?`);
+
+                if (confirmation) {
+                    const isVisible = currentStatus === 'VISIBLE' ? false : true;  // 현재 상태에 따라 반대로 처리
+                    toggleVisibility(reportId, isVisible);  // 상태 변경
+                }
+            }
+
+            // 상태 변경을 서버에 전달하는 함수
+            function toggleVisibility(reportId, isVisible) {
+                const endpoint = `/admin/reports/${reportId}/toggle-visibility`;
+                const visibilityPayload = { visible: isVisible };
+
+                fetch(endpoint, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(visibilityPayload)
+                }).then(response => {
+                    if (response.ok) {
+                        alert(isVisible ? "공개 처리 완료" : "비공개 처리 완료");
+                        window.location.reload();  // 페이지 리로드
+                    } else {
+                        alert("처리 중 오류가 발생했습니다.");
+                    }
+                }).catch(error => {
+                    console.error("오류:", error);
+                    alert("처리 중 오류가 발생했습니다.");
+                });
+            }
+        </script>
+    </div>
 </div>
 </body>
 </html>

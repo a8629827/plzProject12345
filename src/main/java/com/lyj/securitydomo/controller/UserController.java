@@ -1,24 +1,24 @@
 package com.lyj.securitydomo.controller;
 
 import com.lyj.securitydomo.config.auth.PrincipalDetails;
-import com.lyj.securitydomo.domain.Post;
 import com.lyj.securitydomo.domain.User;
+import com.lyj.securitydomo.dto.PageRequestDTO;
+import com.lyj.securitydomo.dto.PageResponseDTO;
 import com.lyj.securitydomo.dto.PostDTO;
 import com.lyj.securitydomo.repository.UserRepository;
 import com.lyj.securitydomo.service.PostService;
-import com.lyj.securitydomo.service.PostServiceImpl;
 import com.lyj.securitydomo.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Log4j2
 @Controller
@@ -30,108 +30,94 @@ public class UserController {
     private final UserService userService;
     private final PostService postService;
 
-
-
-    @GetMapping("/delete")
-    public String deleteUser(@AuthenticationPrincipal PrincipalDetails principal) {
-        Long userId = principal.getUser().getId();
-        userService.deleteUserById(userId);
-        return "redirect:/logout"; // 탈퇴 후 로그아웃 처리
-    }
-
     @GetMapping("/join")
-    public void join(){
+    public void join() {
     }
 
-    @PostMapping("register")
-    public String register(User user) {
-        System.out.println("회원가입 진행 : " + user);
+    @PostMapping("/register")
+    public String register(User user, RedirectAttributes redirectAttributes) {
+        log.info("회원가입 진행 : " + user);
         String rawPassword = user.getPassword();
         String encPassword = bCryptPasswordEncoder.encode(rawPassword);
         user.setPassword(encPassword);
         user.setRole("USER");
         userRepository.save(user);
-        return "redirect:/user/login";
+
+        // 회원가입 완료 메시지 추가
+        redirectAttributes.addFlashAttribute("message", "회원가입이 완료되었습니다.");
+
+        return "redirect:/user/join";
     }
-    @GetMapping("login")
-    public void login(){
+
+    @GetMapping("/login")
+    public void login() {
     }
-    // 마이페이지 정보 조회 (GET 요청)
+
+    // 마이페이지 정보 조회
     @GetMapping("/mypage")
     public String getMyPage(@AuthenticationPrincipal PrincipalDetails principal, Model model) {
-
         log.info("mypage");
-        // 현재 로그인한 사용자 정보를 가져옵니다.
-        User user = principal.getUser(); // 현재 로그인한 사용자의 정보를 가져오는 메소드 (로그인 처리 방식에 따라 달라질 수 있습니다.)
-        log.info("user"+ user);
-        // 모델에 사용자 정보를 추가하여 뷰로 전달합니다.
+
+        User user = principal.getUser();
+        log.info("user: " + user);
         model.addAttribute("user", user);
 
-        // 마이페이지 HTML 뷰를 반환합니다.
         return "/user/mypage";
     }
 
-    // 사용자 정보 수정 처리 (POST 요청)
+    // 사용자 정보 수정
     @PostMapping("/update")
     public String updateUser(@ModelAttribute User user) {
-        User existingUser = userRepository.findById(user.getId()).orElseThrow();
-        // 비밀번호가 입력되지 않았다면 기존 비밀번호 유지
+        User existingUser = userRepository.findById(user.getUserId()).orElseThrow();
+
         if (user.getPassword() == null || user.getPassword().isEmpty()) {
             user.setPassword(existingUser.getPassword());
         } else {
-            // 비밀번호가 입력되었다면 새 비밀번호로 설정 (암호화)
             String encPassword = bCryptPasswordEncoder.encode(user.getPassword());
             user.setPassword(encPassword);
         }
-        user.setRole(existingUser.getRole());  // 기존 역할 유지
+        user.setRole(existingUser.getRole());
 
-        // 사용자가 수정한 정보로 사용자 업데이트
         userService.save(user);
 
-        // 업데이트 후 마이페이지로 리다이렉트
         return "redirect:/user/mypage";
     }
 
+    // 마이페이지 읽기
     @GetMapping("/readmypage")
     public String readMyPage(Model model, @AuthenticationPrincipal PrincipalDetails principal) {
-        // 필요한 데이터가 있다면 모델에 추가
-        return "user/readmypage"; // readmypage.html 뷰로 이동
+        return "/user/readmypage";
     }
-
     @GetMapping("/info")
-    public String getUserInfo(@AuthenticationPrincipal PrincipalDetails principal, Model model) {
-        // 로그인한 사용자 정보 가져오기
+    public String info(@AuthenticationPrincipal PrincipalDetails principal, Model model) {
+        model.addAttribute("user", principal.getUser());
+        return "/user/info";
+    }
+
+    // 회원 탈퇴 기능 추가
+    @PostMapping("/delete")
+    public String deleteUser(@AuthenticationPrincipal PrincipalDetails principal) {
         User user = principal.getUser();
-
-        // 모델에 사용자 정보 추가
-        model.addAttribute("user", user);
-
-        // 사용자 정보 페이지로 이동
-        return "user/info";
+        userService.deleteUser(user.getUserId()); // 필드명이 userId일 경우
+        return "redirect:/user/logout"; // 로그아웃 후 메인 페이지로 이동
     }
-    // 사용자가 작성한 게시글 목록 페이지
     @GetMapping("/mywriting")
-    public String getMyPosts(@AuthenticationPrincipal UserDetails userDetails, Model model) {
-        String username = userDetails.getUsername();
-        User user = userService.findByUsername(username);
-        List<Post> myPosts = postService.findPostsByUser(user);
-        model.addAttribute("myPosts", myPosts);
-        return "user/mywriting";
-    }
-
-    // 게시글 삭제 요청 처리
-    @DeleteMapping("/posting/delete/{postId}")
-    @ResponseBody
-    public String deletePost(@PathVariable Long postId, @AuthenticationPrincipal UserDetails userDetails) {
-        String username = userDetails.getUsername();
-        User user = userService.findByUsername(username);
-        Post post = postService.findById(postId);
-
-        if (post != null && post.getUser().equals(user)) {
-            postService.deletePost(postId);
-            return "success";
-        } else {
-            return "fail";
+    public String myWritinglist(PageRequestDTO pageRequestDTO, @AuthenticationPrincipal PrincipalDetails principal, Model model) {
+        if (pageRequestDTO.getSize() <= 0) {
+            pageRequestDTO.setSize(10); // 기본값 설정
         }
+
+        // 게시글 목록을 가져올 때, isVisible이 true인 게시글만 필터링
+        PageResponseDTO<PostDTO> responseDTO = postService.writinglist(pageRequestDTO, principal.getUser());
+
+        // 모델에 게시글을 추가하기 전에 로그 출력
+        log.info("게시글 목록 전달: {}", responseDTO.getDtoList());
+
+        model.addAttribute("myPosts", responseDTO.getDtoList()); // 게시글 DTO 리스트 추가
+        model.addAttribute("totalPages", (int) Math.ceil(responseDTO.getTotal() / (double) pageRequestDTO.getSize())); // 총 페이지 수 계산
+        model.addAttribute("currentPage", responseDTO.getPage()); //
+        model.addAttribute("user", principal.getUser());
+        return "/user/mywriting";
+
     }
 }
