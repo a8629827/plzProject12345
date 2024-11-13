@@ -34,7 +34,7 @@
         <div class="col mb-5" th:each="post : ${myPosts}">
           <div class="card h-100">
             <!-- 게시글 썸네일 -->
-            <a th:href="@{/posting/read/{postId}(postId=${post.postId})}" class="text-decoration-none">
+            <a th:href="@{/user/readwriting/{postId}(postId=${post.postId})}" class="text-decoration-none">
               <img class="card-img-top img-thumbnail" th:src="${post.thumbnail}" alt="이미지"/>
             </a>
             <!-- 게시글 내용 -->

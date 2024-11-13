@@ -30,4 +30,13 @@ public interface PostService {
     void markPostAsInvisible(Long postId);  // 비공개 처리 메서드
 
     public PageResponseDTO<PostDTO> writinglist(PageRequestDTO pageRequestDTO, User user);
+
+    // 모든 게시글 조회
+    List<PostDTO> getAllPosts();
+
+    // 게시글 ID로 특정 게시글 조회
+    PostDTO getPostById(Long postId);
+
+    // 게시글 삭제
+    void deletePost(Long postId);
 }

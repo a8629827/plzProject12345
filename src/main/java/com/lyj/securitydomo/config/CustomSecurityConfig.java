@@ -6,65 +6,63 @@ import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class CustomSecurityConfig {
+
+    // UserDetailsService는 사용자 인증 정보를 가져오는 서비스로, Security 설정에 사용
+    private final UserDetailsService userDetailsService;
+
+    // SecurityFilterChain을 설정하여 각 요청의 보안 규칙을 정의
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http
-                .csrf(httpSecurityCsrfConfigurer -> httpSecurityCsrfConfigurer.disable())
-                .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.disable())
-                .authorizeHttpRequests(authorizeHttpRequestsConfigurer -> authorizeHttpRequestsConfigurer
+        // HttpSecurity를 통해 CSRF 비활성화 및 권한 규칙 설정
+        http
+                .csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화
+                .authorizeHttpRequests(auth -> auth
+                        // 특정 DispatcherType을 허용
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-                        .requestMatchers("/login", "/sinup", "/user/**", "/", "/all", "/posting/**","/view/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/report/create").permitAll() // 신고하기 URL 허용
+                        // 로그인, 회원가입, 특정 경로는 인증 없이 접근 가능
+                        .requestMatchers("/login", "/signup", "/user/**", "/", "/all", "/posting/**", "/view/**").permitAll()
+                        // POST 요청의 /report/create 경로에 대한 접근 허용 (신고 기능)
+                        .requestMatchers(HttpMethod.POST, "/report/create").permitAll()
+                        // 관리자 경로 접근 권한 설정 (ADMIN 권한 필요)
                         .requestMatchers("/admin/**").hasAuthority("ADMIN")
-                        .requestMatchers("/images/**", "/css/**", "/js/**", "/webjars/**").permitAll()// 정적 리소스 허용
+                        // 정적 리소스에 대한 접근 허용
+                        .requestMatchers("/images/**", "/css/**", "/js/**", "/webjars/**").permitAll()
+                        // 나머지 모든 요청은 인증 필요
                         .anyRequest().authenticated())
-                .formLogin(formLoginConfigurer -> formLoginConfigurer
-                        .loginPage("/user/login")
-                        .loginProcessingUrl("/loginProcess")
-                        .usernameParameter("username")
-                        .passwordParameter("password")
-                        .defaultSuccessUrl("/posting/list"))
-                .logout(logoutConfigurer -> logoutConfigurer
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/user/login")
-                        .invalidateHttpSession(true)
-                        .clearAuthentication(true))
-                .build();
+                // 폼 로그인 설정
+                .formLogin(form -> form
+                        .loginPage("/user/login") // 사용자 정의 로그인 페이지 경로 설정
+                        .loginProcessingUrl("/loginProcess") // 로그인 처리를 위한 URL
+                        .defaultSuccessUrl("/posting/list") // 로그인 성공 후 이동할 페이지 (홈페이지)
+                        .failureUrl("/user/login?error=true")  // 로그인 실패 시 URL
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/logout") // 로그아웃 처리 URL
+                        .logoutSuccessUrl("/user/login") // 로그아웃 성공 시 이동할 경로
+                        .invalidateHttpSession(true) // 세션 무효화
+                        .clearAuthentication(true)); // 인증 정보 제거
+
+        // AuthenticationManager를 HttpSecurity 내에서 설정
+        AuthenticationManagerBuilder auth = http.getSharedObject(AuthenticationManagerBuilder.class);
+        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder());
+
+        return http.build(); // 최종 SecurityFilterChain 반환
     }
 
-
-    @Bean // password 암호화 빈
+    // BCryptPasswordEncoder 빈 설정으로 비밀번호 암호화 사용
+    @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public WebSecurityCustomizer configure() {
-        return (web) -> web.ignoring() // 모든 스태틱 자원 필터 제외
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-        //.requestMatchers("/static/**");
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http,
-                                                       BCryptPasswordEncoder bCryptPasswordEncoder,
-                                                       UserDetailsService userDetailsService, AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-        AuthenticationManagerBuilder builder =
-                http.getSharedObject(AuthenticationManagerBuilder.class);
-        builder.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
-        return builder.build();
     }
 }

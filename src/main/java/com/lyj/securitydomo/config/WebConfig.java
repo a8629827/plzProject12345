@@ -12,7 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
         // 실제 저장 경로를 `/view/` 경로로 매핑
         registry.addResourceHandler("/view/**")
                 .addResourceLocations
-                        ("file:C://Users//admin//2024Workspace//plzProject-main//upload");
+                        ("file:C://springbootPro//plzProject12345//src//main//resources//static//upload");
 
     }
 }

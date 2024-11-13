@@ -213,5 +213,42 @@ public class PostServiceImpl implements PostService {
                 .build(); // PageResponseDTO 반환
     }
 
+    @Override
+    public List<PostDTO> getAllPosts() {
+        return List.of();
+    }
+
+    @Override
+    public PostDTO getPostById(Long postId) {
+        return null;
+    }
+
+    @Override
+    public void deletePost(Long postId) {
+
+    }
+
+//    @Override
+//    public List<PostDTO> getAllPosts() {
+//        return postRepository.findAll().stream()
+//                .map(post -> new PostDTO(post.getpostId(), post.getTitle(), post.getThumbnail(), post.getCreatedAt(), post.getStatus(), post.getRequiredParticipants()))
+//                .collect(Collectors.toList());
+//    }
+//
+//    @Override
+//    public PostDTO getPostById(Long postId) {
+//        Post post = postRepository.findById(postId)
+//                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다. ID: " + postId));
+//        return new PostDTO(post.getPostId(), post.getTitle(), post.getThumbnail(), post.getCreatedAt(), post.getStatus(), post.getRequiredParticipants(), post.getAuthor(), post.getContentText());
+//    }
+//
+//    @Override
+//    public void deletePost(Long postId) {
+//        if (!postRepository.existsById(postId)) {
+//            throw new IllegalArgumentException("해당 게시글이 존재하지 않습니다. ID: " + postId);
+//        }
+//        postRepository.deleteById(postId);
+//    }
+
 
 }
